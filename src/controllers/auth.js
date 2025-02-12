@@ -18,7 +18,7 @@ const login = async (req, res) => {
             return res.json({ message: "Incorrect password" });
         }
 
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET)
+        const token = jwt.sign({ userId: user._id, userRole: user.role }, process.env.JWT_SECRET)
 
         return res.json({ "message": "SignUp Successfully", token: token });
     }
@@ -30,6 +30,12 @@ const login = async (req, res) => {
 const signUp = async (req, res) => {
     try {
         const { email, password, role } = req.body
+
+        const checkUser = await User.findOne({ email })
+        if (checkUser) {
+            return res.json({ message: "Email is already registered with this email" });
+        }
+
         const user = new User()
         user.email = email
         user.password = bcrypt.hashSync(password, 10)
@@ -38,7 +44,7 @@ const signUp = async (req, res) => {
         return res.json({ message: "Account created", user: { email, role } });
     }
     catch (error) {
-        console.log(error)
+        console.log('error')
         return res.status(500).send({ message: "Server error" })
     }
 }
