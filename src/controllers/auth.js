@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const { loginInput } = require("../utils/validateInput");
 const User = require("../Schema/User");
 const bcrypt = require("bcrypt");
 require("dotenv").config()
@@ -10,17 +9,17 @@ const login = async (req, res) => {
 
         const user = await User.findOne({ email })
         if (!user) {
-            return res.json({ message: "Email is not registered with us" });
+            return res.status(400).json({ message: "Email is not registered with us" });
         }
 
         const comparePassword = await bcrypt.compare(password, user.password)
         if (!comparePassword) {
-            return res.json({ message: "Incorrect password" });
+            return res.status(401).json({ message: "Incorrect password" });
         }
 
         const token = jwt.sign({ userId: user._id, userRole: user.role }, process.env.JWT_SECRET)
 
-        return res.json({ "message": "SignUp Successfully", token: token });
+        return res.status(200).json({ "message": "SignIn Successfully", token: token });
     }
     catch (error) {
         return res.send(error)
@@ -33,7 +32,7 @@ const signUp = async (req, res) => {
 
         const checkUser = await User.findOne({ email })
         if (checkUser) {
-            return res.json({ message: "Email is already registered with this email" });
+            return res.status(400).json({ message: "Email is already registered with this email" });
         }
 
         const user = new User()
@@ -41,7 +40,7 @@ const signUp = async (req, res) => {
         user.password = bcrypt.hashSync(password, 10)
         user.role = role
         user.save()
-        return res.json({ message: "Account created", user: { email, role } });
+        return res.status(201).json({ message: "Account created", user: { email, role } });
     }
     catch (error) {
         console.log('error')

@@ -1,6 +1,3 @@
-const jwt = require("jsonwebtoken");
-const { loginInput } = require("../utils/validateInput");
-const bcrypt = require("bcrypt");
 const Task = require("../Schema/Task");
 require("dotenv").config()
 
@@ -11,7 +8,7 @@ const createTask = async (req, res) => {
 
         const checkTask = await Task.findOne({ title })
         if (checkTask) {
-            return res.json({ message: "This task is already registered" });
+            return res.status(400).json({ message: "This task is already registered" });
         }
 
         const task = new Task()
@@ -22,7 +19,7 @@ const createTask = async (req, res) => {
         task.due_date = due_date
         task.assigned_to = req.userId
         task.save()
-        return res.json({ message: "User account created", task: { task } });
+        return res.status(201).json({ message: "User account created", task: { task } });
     }
     catch (error) {
         return res.status(500).send({ message: error })
