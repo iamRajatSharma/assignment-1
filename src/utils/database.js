@@ -1,7 +1,10 @@
 const mongoose = require("mongoose")
 
-const conn = mongoose.connect("mongodb+srv://rajat:12345@cluster0.6wrjo.mongodb.net/assignment1?retryWrites=true&w=majority&appName=cluster0")
-
-console.log('DB Connected')
-
-module.exports = conn
+const mongoURI = 'mongodb://localhost:27017/assignment1';
+mongoose.connect(mongoURI)
+    .then((success) => {
+        console.log('Database connected')
+    })
+    .catch((error) => {
+        console.log(error)
+    })
