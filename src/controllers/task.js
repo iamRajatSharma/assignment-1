@@ -29,7 +29,7 @@ const createTask = async (req, res) => {
 
 const getAllTask = async (req, res) => {
     try {
-        const tasks = await Task.find({ assigned_to: req.userId })
+        const tasks = req.userRole == "ADMIN" ? await Task.find({}) : await Task.find({ assigned_to: req.userId });
         return res.status(200).send({ message: "Task list", tasks })
     }
     catch (error) {
@@ -40,7 +40,7 @@ const getAllTask = async (req, res) => {
 
 const getOneTask = async (req, res) => {
     try {
-        const task = await Task.findOne({ assigned_to: req.userId, _id: req.params.id })
+        const task = req.userRole == "ADMIN" ? await Task.findOne({ _id: req.params.id }) : await Task.findOne({ assigned_to: req.userId, _id: req.params.id })
         if (task) {
             return res.status(200).send(task)
         }
@@ -54,7 +54,7 @@ const getOneTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
     try {
-        const task = await Task.findOneAndDelete({ assigned_to: req.userId, _id: req.params.id })
+        const task = req.userRole == "ADMIN" ? await Task.findOneAndDelete({ _id: req.params.id }) : await Task.findOneAndDelete({ assigned_to: req.userId, _id: req.params.id })
         if (task) {
             return res.status(200).send({ message: "Task deleted successfully", task })
         }
@@ -69,7 +69,7 @@ const updateTask = async (req, res) => {
     try {
         const { title, description, status, priority, due_date } = req.body;
 
-        const task = await Task.findOne({ assigned_to: req.userId, _id: req.params.id })
+        const task = req.userRole == "ADMIN" ? await Task.findOne({ _id: req.params.id }) : await Task.findOne({ assigned_to: req.userId, _id: req.params.id })
         if (!task) {
             return res.status(200).send({ message: "Task not found" })
         }

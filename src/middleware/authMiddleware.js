@@ -20,8 +20,24 @@ const tokenValidator = (req, res, next) => {
 }
 
 const checkRole = (req, res, next) => {
+    console.log(req)
     try {
+
         if (req.userRole != "ADMIN") {
+            return res.status(500).json({ message: "You are not the authorized person to perform this task" })
+        }
+        next()
+    }
+    catch (error) {
+        return res.json(error)
+    }
+}
+
+const adminAccess = (req, res, next) => {
+    console.log(req.userRole)
+    try {
+
+        if (req.userRole == "USER") {
             return res.status(500).json({ message: "You are not the authorized person to perform this task" })
         }
         next()
@@ -34,5 +50,6 @@ const checkRole = (req, res, next) => {
 
 module.exports = {
     tokenValidator,
-    checkRole
+    checkRole,
+    adminAccess
 }
