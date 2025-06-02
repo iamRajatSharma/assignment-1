@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const mongoURI = 'mongodb://localhost:27017/assignment1';
+const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI)
     .then((success) => {
         console.log('Database connected')
